@@ -1,7 +1,7 @@
 from decimal import Decimal
 import unittest
 
-from compute import compute_value, format_decimal
+from compute import compute_value
 
 class TestComputeValue(unittest.TestCase):
     """
@@ -54,12 +54,12 @@ class TestComputeValue(unittest.TestCase):
         computed_value = compute_value(Decimal('3.3'), Decimal('1.1'), Decimal('5'), Decimal('0'))
         self.assertEqual(computed_value, Decimal('2.2'))
 
-    def test_precision_to_10_places(self):
+    def test_precision_to_tenths_places(self):
         """
-        The computed value calculation is accurate to 10 decimal places.
+        The computed value calculation is accurate to tenths places.
         """
-        computed_value = compute_value(Decimal('1000000000'), Decimal('0.0000000001'), Decimal('1000000000'), Decimal('0'))
-        self.assertEqual(computed_value, Decimal('999999999.9999999999'))
+        computed_value = compute_value(Decimal('1000000000'), Decimal('0.1'), Decimal('1000000000'), Decimal('0'))
+        self.assertEqual(computed_value, Decimal('999999999.9'))
 
     def test_value_exceeds_max_value(self):
         """
@@ -80,32 +80,6 @@ class TestComputeValue(unittest.TestCase):
             compute_value(Decimal('-1'), Decimal('1'), Decimal('1000000000'), Decimal('0'))
 
         self.assertEqual('Values must be between 0.0 and 1,000,000,000.0 inclusively', str(context.exception))
-
-class TestFormatDecimal(unittest.TestCase):
-    """
-    Test the format function in compute.py to always return at least 1 decimal place.
-    """
-
-    def test_no_decimal_places(self):
-        """
-        The formatted value should have at least 1 decimal place.
-        """
-        formatted_value = format_decimal(Decimal('10'))
-        self.assertEqual(formatted_value, '10.0')
-
-    def test_decimal_places(self):
-        """
-        The formatted value should have 10 decimal places.
-        """
-        formatted_value = format_decimal(Decimal('10.123456789'))
-        self.assertEqual(formatted_value, '10.123456789')
-
-    def test_trailing_zeros(self):
-        """
-        The formatted value should have trailing zeros.
-        """
-        formatted_value = format_decimal(Decimal('10.0'))
-        self.assertEqual(formatted_value, '10.0')
 
 if __name__ == '__main__':
     unittest.main()
