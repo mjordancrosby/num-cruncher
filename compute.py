@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from decimal import getcontext, Decimal
 import sys
 
