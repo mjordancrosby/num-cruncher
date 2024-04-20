@@ -11,12 +11,10 @@ fail_test() {
   exit 1
 }
 
-test_happy_path() {
-  expected=("0.0" "0.0" "0.0" "1.5" "19000.0" "19980998.5" "20000000.0")
-  actual=($(cat $test_dir/input | python3 $test_dir/../../compute.py 1000 20000000))
-
-  echo "Running happy path test"
-    if [ "${#expected[@]}" -ne "${#actual[@]}" ]; then
+check_output() {
+  expected=($1)
+  actual=($2)
+  if [ "${#expected[@]}" -ne "${#actual[@]}" ]; then
       fail_test "${expected[*]}" "${actual[*]}"
   fi
 
@@ -25,6 +23,29 @@ test_happy_path() {
         fail_test "${expected[*]}" "${actual[*]}"
       fi
   done
+}
+
+test_happy_path() {
+  echo "Running happy path test"
+  expected=("0.0" "0.0" "0.0" "1.5" "19000.0" "19980998.5" "20000000.0")
+  actual=($(cat $test_dir/input | python3 $test_dir/../../compute.py 1000 20000000))
+  check_output "${expected[*]}" "${actual[*]}"
+  echo "Test passed"
+}
+
+test_zero_threshold() {
+  echo "Running test for zero threshold"
+  expected=("19.0" "0.0" "1000.0" "1001.5" "20000.0" "19977979.5" "20000000.0")
+  actual=($(cat $test_dir/input | python3 $test_dir/../../compute.py 0 20000000))
+  check_output "${expected[*]}" "${actual[*]}"
+  echo "Test passed"
+}
+
+test_zero_limit() {
+  echo "Running test for zero threshold"
+  expected=("0.0" "0.0" "0.0" "0.0" "0.0" "0.0" "0.0")
+  actual=($(cat $test_dir/input | python3 $test_dir/../../compute.py 1000 0))
+  check_output "${expected[*]}" "${actual[*]}"
   echo "Test passed"
 }
 
@@ -32,9 +53,7 @@ test_no_input() {
   echo "Running test for no input"
   expected="0.0"
   actual=$(echo "" | python3 $test_dir/../../compute.py 1.1 1.1)
-  if [ "${expected}" != "${actual}" ]; then
-    fail_test "${expected}" "${actual}"
-  fi
+  check_output "${expected}" "${actual}"
   echo "Test passed"
 }
 
@@ -128,6 +147,10 @@ test_input_value_above_max() {
 echo "Running e2e tests"
 
 test_happy_path
+
+test_zero_threshold
+
+test_zero_limit
 
 test_no_input
 

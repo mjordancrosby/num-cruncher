@@ -58,8 +58,7 @@ def main():
     for line in sys.stdin:
         input_value = line.strip()
         if not input_value:
-            continue
-
+            break
         try:
             value = Decimal(input_value)
             computed_value = compute_value(value, threshold, limit, total)
