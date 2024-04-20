@@ -68,6 +68,9 @@ def main():
 
     total = Decimal(0.0)
     for line in sys.stdin:
+        if not line.strip():
+            continue
+        
         try:
             value = Decimal(line.strip())
             computed_value = compute_value(value, threshold, limit, total)

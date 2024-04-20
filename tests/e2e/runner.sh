@@ -1,26 +1,40 @@
 #!/bin/bash
 test_dir=$(dirname "$0")
 
+fail_test() {
+  expected=$1
+  actual=$2
+  echo "Test failed"
+  echo "Actual output did not match expected output"
+  echo "Expected: ${expected}"
+  echo "Actual: ${actual}"
+  exit 1
+}
+
 test_happy_path() {
   expected=("0.0" "0.0" "0.0" "1.5" "19000.0" "19980998.5" "20000000.0")
   actual=($(cat $test_dir/input | python3 $test_dir/../../compute.py 1000 20000000))
 
   echo "Running happy path test"
     if [ "${#expected[@]}" -ne "${#actual[@]}" ]; then
-      echo "Actual output did not match expected output"
-      echo "Expected: ${expected[*]}"
-      echo "Actual: ${actual[*]}"
-      exit 1
+      fail_test "${expected[*]}" "${actual[*]}"
   fi
 
   for i in "${!expected[@]}"; do
       if [ "${expected[i]}" != "${actual[i]}" ]; then
-        echo "Actual output did not match expected output"
-        echo "Expected: ${expected[*]}"
-        echo "Actual: ${actual[*]}"
-        exit 1
+        fail_test "${expected[*]}" "${actual[*]}"
       fi
   done
+  echo "Test passed"
+}
+
+test_no_input() {
+  echo "Running test for no input"
+  expected="0.0"
+  actual=$(echo "" | python3 $test_dir/../../compute.py 1.1 1.1)
+  if [ "${expected}" != "${actual}" ]; then
+    fail_test "${expected}" "${actual}"
+  fi
   echo "Test passed"
 }
 
@@ -34,8 +48,7 @@ assert_error() {
   actual=$2
 
   if [ "$expected" != "$actual" ]; then
-    echo "Test failed. Expected: $expected, Actual: $actual"
-    exit 1
+    fail_test "${expected}" "${actual}"
   fi
 }
 
@@ -115,6 +128,8 @@ test_input_value_above_max() {
 echo "Running e2e tests"
 
 test_happy_path
+
+test_no_input
 
 test_required_args
 
