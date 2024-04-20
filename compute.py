@@ -39,19 +39,43 @@ def format_decimal(value: Decimal) -> str:
 def main():
     getcontext().prec = 10
 
+    if len(sys.argv) != 3:
+        print("Usage: python compute.py <threshold> <limit>", file=sys.stderr)
+        sys.exit(1)
+    
+    try:
+        threshold = Decimal(sys.argv[1])
+    except Exception:
+        print("threshold must be a numerical value", file=sys.stderr)
+        sys.exit(1)
 
-    threshold = Decimal(sys.argv[1])
-    limit = Decimal(sys.argv[2])
+    if  not (MIN_VALUE <= threshold <= MAX_VALUE):
+        print("threshold must be between 0.0 and 1,000,000,000.0 (inclusive)", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        limit = Decimal(sys.argv[2])
+    except Exception:
+        print("limit must be a numerical value", file=sys.stderr)
+        sys.exit(1)
+
+    if  not (MIN_VALUE <= limit <= MAX_VALUE):
+        print("limit must be between 0.0 and 1,000,000,000.0 (inclusive)", file=sys.stderr)
+        sys.exit(1)
+
 
     total = Decimal(0.0)
     for line in sys.stdin:
         try:
             value = Decimal(line.strip())
-        except ValueError:
-            print("Input must be numerical values")
+            computed_value = compute_value(value, threshold, limit, total)
+        except ValueError as e:
+            print(str(e), file=sys.stderr)
+            sys.exit(1)
+        except Exception:
+            print(f"input value {line} not a numerical value", file=sys.stderr)
             sys.exit(1)
 
-        computed_value = compute_value(value, threshold, limit, total)
         total += computed_value
         print(format_decimal(computed_value))
 
