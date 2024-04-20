@@ -25,3 +25,12 @@ def compute_value(
         return limit - total
     
     return computed_value
+
+def format_decimal(value: Decimal) -> str:
+    """
+    Format decimal value to string with 10 decimal places.
+    """
+    if value.as_tuple().exponent == 0:
+        return f"{value:.1f}"
+    return str(value)
+
