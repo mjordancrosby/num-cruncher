@@ -19,5 +19,7 @@ tests: unittest e2e
 build:
 	@echo "Building the project"
 	@docker build -t solution .
+	@echo "Running smoke tests"
+	./tests/smoke/runner.sh 
 
 
