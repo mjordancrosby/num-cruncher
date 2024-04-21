@@ -1,7 +1,3 @@
-
-
-
-
 .PHONY: all unittest e2e tests build
 
 all: tests build
