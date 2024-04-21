@@ -3,7 +3,6 @@
 test_dir=$(dirname "$0")
 source ${test_dir}/../test_utils.sh
 
-
 test_happy_path() {
   echo "Running happy path test"
   expected=("4.5" "5.5" "10.0")
@@ -14,7 +13,7 @@ test_happy_path() {
 }
 
 test_non_root_user() {
-  echo "Running test for non-root user"
+  echo "Running test to check if the container runs as a non-root user"
   expected="compute"
   actual=$(docker run -i --rm solution:latest whoami)
   check_output "${expected}" "${actual}"
